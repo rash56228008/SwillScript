@@ -14,7 +14,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local LocalPlayer = Players.LocalPlayer
 local Camera = Workspace.CurrentCamera
 
--- // НАСТРОЙКИ (связаны с меню)
+-- // НАСТРОЙКИ
 local Settings = {
     ESP = false,
     Aimbot = false,
@@ -29,132 +29,301 @@ local Settings = {
 }
 
 -- // ================================================
--- // МЕНЮ ОТ CHATGPT (вставлено целиком)
+-- // МЕНЮ (ПОЛНОСТЬЮ ОТ CHATGPT)
 -- // ================================================
 
--- (здесь ВЕСЬ код меню, который дал ChatGPT, включая CreateToggle, CreateTextBox и т.д.)
--- (я не буду повторять его полностью, чтобы не тратить место, но ты вставляешь его сюда)
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 
--- // ================================================
--- // ПРИВЯЗКА КНОПОК МЕНЮ К НАСТРОЙКАМ
--- // ================================================
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "SwillTrainingV7"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.IgnoreGuiInset = true
+ScreenGui.Parent = PlayerGui
 
--- ЭТОТ БЛОК ТЫ ДОБАВЛЯЕШЬ В КОНЦЕ МЕНЮ (перед print)
+local Main = Instance.new("Frame")
+Main.Name = "Main"
+Main.Size = UDim2.new(0, 390, 0, 650)
+Main.Position = UDim2.new(0.5, -195, 0.5, -325)
+Main.BackgroundColor3 = Color3.fromRGB(17, 20, 29)
+Main.BorderSizePixel = 0
+Main.Parent = ScreenGui
 
--- Привязка переключателей
-local function FindToggle(name)
-    for _, btn in pairs(Content:GetDescendants()) do
-        if btn:IsA("TextButton") and btn.Text:find(name) then
-            return btn
+local MainCorner = Instance.new("UICorner")
+MainCorner.CornerRadius = UDim.new(0, 14)
+MainCorner.Parent = Main
+
+local MainStroke = Instance.new("UIStroke")
+MainStroke.Color = Color3.fromRGB(65, 75, 100)
+MainStroke.Thickness = 1
+MainStroke.Transparency = 0.25
+MainStroke.Parent = Main
+
+local Header = Instance.new("Frame")
+Header.Name = "Header"
+Header.Size = UDim2.new(1, 0, 0, 70)
+Header.BackgroundColor3 = Color3.fromRGB(27, 32, 46)
+Header.BorderSizePixel = 0
+Header.Parent = Main
+
+local HeaderCorner = Instance.new("UICorner")
+HeaderCorner.CornerRadius = UDim.new(0, 14)
+HeaderCorner.Parent = Header
+
+local HeaderFix = Instance.new("Frame")
+HeaderFix.Size = UDim2.new(1, 0, 0, 15)
+HeaderFix.Position = UDim2.new(0, 0, 1, -15)
+HeaderFix.BackgroundColor3 = Header.BackgroundColor3
+HeaderFix.BorderSizePixel = 0
+HeaderFix.Parent = Header
+
+local Title = Instance.new("TextLabel")
+Title.Name = "Title"
+Title.Size = UDim2.new(1, -30, 0, 32)
+Title.Position = UDim2.new(0, 15, 0, 8)
+Title.BackgroundTransparency = 1
+Title.Text = "SWILL TRAINING v7.0"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 21
+Title.TextXAlignment = Enum.TextXAlignment.Left
+Title.Parent = Header
+
+local Subtitle = Instance.new("TextLabel")
+Subtitle.Size = UDim2.new(1, -30, 0, 20)
+Subtitle.Position = UDim2.new(0, 15, 0, 40)
+Subtitle.BackgroundTransparency = 1
+Subtitle.Text = "Training interface • Settings"
+Subtitle.TextColor3 = Color3.fromRGB(145, 155, 175)
+Subtitle.Font = Enum.Font.Gotham
+Subtitle.TextSize = 11
+Subtitle.TextXAlignment = Enum.TextXAlignment.Left
+Subtitle.Parent = Header
+
+local Content = Instance.new("ScrollingFrame")
+Content.Name = "Content"
+Content.Size = UDim2.new(1, -24, 1, -84)
+Content.Position = UDim2.new(0, 12, 0, 78)
+Content.BackgroundTransparency = 1
+Content.BorderSizePixel = 0
+Content.ScrollBarThickness = 4
+Content.ScrollBarImageColor3 = Color3.fromRGB(80, 95, 125)
+Content.CanvasSize = UDim2.new(0, 0, 0, 0)
+Content.AutomaticCanvasSize = Enum.AutomaticSize.Y
+Content.Parent = Main
+
+local ContentPadding = Instance.new("UIPadding")
+ContentPadding.PaddingTop = UDim.new(0, 4)
+ContentPadding.PaddingBottom = UDim.new(0, 15)
+ContentPadding.PaddingLeft = UDim.new(0, 5)
+ContentPadding.PaddingRight = UDim.new(0, 5)
+ContentPadding.Parent = Content
+
+local Layout = Instance.new("UIListLayout")
+Layout.Padding = UDim.new(0, 8)
+Layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+Layout.SortOrder = Enum.SortOrder.LayoutOrder
+Layout.Parent = Content
+
+-- // HELPERS
+local function CreateSection(Text)
+    local Section = Instance.new("TextLabel")
+    Section.Size = UDim2.new(1, 0, 0, 28)
+    Section.BackgroundTransparency = 1
+    Section.Text = Text
+    Section.TextColor3 = Color3.fromRGB(90, 180, 255)
+    Section.Font = Enum.Font.GothamBold
+    Section.TextSize = 13
+    Section.TextXAlignment = Enum.TextXAlignment.Left
+    Section.Parent = Content
+    return Section
+end
+
+local function CreateButton(Text)
+    local Button = Instance.new("TextButton")
+    Button.Size = UDim2.new(1, 0, 0, 38)
+    Button.BackgroundColor3 = Color3.fromRGB(34, 40, 55)
+    Button.BorderSizePixel = 0
+    Button.AutoButtonColor = false
+    Button.Text = Text
+    Button.TextColor3 = Color3.fromRGB(235, 238, 245)
+    Button.Font = Enum.Font.GothamMedium
+    Button.TextSize = 13
+    Button.Parent = Content
+
+    local Corner = Instance.new("UICorner")
+    Corner.CornerRadius = UDim.new(0, 8)
+    Corner.Parent = Button
+
+    local Stroke = Instance.new("UIStroke")
+    Stroke.Color = Color3.fromRGB(65, 75, 95)
+    Stroke.Thickness = 1
+    Stroke.Transparency = 0.35
+    Stroke.Parent = Button
+
+    Button.MouseEnter:Connect(function()
+        Button.BackgroundColor3 = Color3.fromRGB(48, 57, 76)
+    end)
+
+    Button.MouseLeave:Connect(function()
+        Button.BackgroundColor3 = Color3.fromRGB(34, 40, 55)
+    end)
+
+    return Button
+end
+
+local function CreateToggle(Name, InitialValue)
+    local Button = CreateButton("")
+    local Value = InitialValue
+
+    local function Update()
+        if Value then
+            Button.Text = Name .. "    [ ON ]"
+            Button.BackgroundColor3 = Color3.fromRGB(35, 92, 70)
+        else
+            Button.Text = Name .. "    [ OFF ]"
+            Button.BackgroundColor3 = Color3.fromRGB(34, 40, 55)
         end
     end
+
+    Button.MouseButton1Click:Connect(function()
+        Value = not Value
+        Settings[Name] = Value
+        Update()
+    end)
+
+    Update()
+    return Button
 end
 
--- Привязка полей ввода
-local function FindTextBox(name)
-    for _, box in pairs(Content:GetDescendants()) do
-        if box:IsA("TextBox") and box.Parent:FindFirstChild("TextLabel") and box.Parent.TextLabel.Text == name then
-            return box
-        end
+local function CreateTextBox(LabelText, DefaultValue)
+    local Container = Instance.new("Frame")
+    Container.Size = UDim2.new(1, 0, 0, 52)
+    Container.BackgroundColor3 = Color3.fromRGB(28, 34, 47)
+    Container.BorderSizePixel = 0
+    Container.Parent = Content
+
+    local Corner = Instance.new("UICorner")
+    Corner.CornerRadius = UDim.new(0, 8)
+    Corner.Parent = Container
+
+    local Label = Instance.new("TextLabel")
+    Label.Size = UDim2.new(0.55, 0, 1, 0)
+    Label.Position = UDim2.new(0, 12, 0, 0)
+    Label.BackgroundTransparency = 1
+    Label.Text = LabelText
+    Label.TextColor3 = Color3.fromRGB(220, 225, 235)
+    Label.Font = Enum.Font.GothamMedium
+    Label.TextSize = 12
+    Label.TextXAlignment = Enum.TextXAlignment.Left
+    Label.Parent = Container
+
+    local Box = Instance.new("TextBox")
+    Box.Size = UDim2.new(0, 105, 0, 32)
+    Box.Position = UDim2.new(1, -117, 0.5, -16)
+    Box.BackgroundColor3 = Color3.fromRGB(18, 22, 31)
+    Box.BorderSizePixel = 0
+    Box.Text = tostring(DefaultValue)
+    Box.PlaceholderText = tostring(DefaultValue)
+    Box.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Box.PlaceholderColor3 = Color3.fromRGB(110, 120, 140)
+    Box.Font = Enum.Font.Gotham
+    Box.TextSize = 13
+    Box.ClearTextOnFocus = false
+    Box.Parent = Container
+
+    local BoxCorner = Instance.new("UICorner")
+    BoxCorner.CornerRadius = UDim.new(0, 6)
+    BoxCorner.Parent = Box
+
+    return Box
+end
+
+local function CreateOptionButton(Text, GroupName, Value)
+    local Button = CreateButton(Text)
+    Button.MouseButton1Click:Connect(function()
+        Settings[GroupName] = Value
+    end)
+    return Button
+end
+
+-- // СОЗДАНИЕ ЭЛЕМЕНТОВ МЕНЮ
+CreateSection("VISUAL ASSISTANT")
+CreateToggle("ESP", false)
+CreateToggle("Aimbot", false)
+
+CreateTextBox("ESP line thickness", 1.5)
+CreateTextBox("ESP text size", 14)
+
+CreateSection("ESP COLOR")
+CreateOptionButton("🔵  Blue", "ESPColor", "Blue")
+CreateOptionButton("🔴  Red", "ESPColor", "Red")
+CreateOptionButton("🟢  Green", "ESPColor", "Green")
+
+CreateSection("MOVEMENT")
+CreateToggle("Fly", false)
+CreateToggle("Noclip", false)
+CreateTextBox("Fly speed", 50)
+
+CreateSection("AIM TARGET")
+CreateOptionButton("Head", "AimPart", "Head")
+CreateOptionButton("Torso", "AimPart", "Torso")
+CreateOptionButton("Legs", "AimPart", "Legs")
+
+CreateSection("PROFESSION")
+CreateOptionButton("👤  Civilian", "Profession", "Civilian")
+CreateOptionButton("🛡️  Border Patrol", "Profession", "BorderPatrol")
+CreateOptionButton("👮  Police", "Profession", "Police")
+
+CreateSection("CURRENT SETTINGS")
+local Status = Instance.new("TextLabel")
+Status.Size = UDim2.new(1, 0, 0, 45)
+Status.BackgroundColor3 = Color3.fromRGB(24, 29, 40)
+Status.BorderSizePixel = 0
+Status.TextColor3 = Color3.fromRGB(150, 160, 180)
+Status.Font = Enum.Font.Gotham
+Status.TextSize = 11
+Status.TextWrapped = true
+Status.Text = "Interface loaded"
+Status.Parent = Content
+
+local StatusCorner = Instance.new("UICorner")
+StatusCorner.CornerRadius = UDim.new(0, 8)
+StatusCorner.Parent = Status
+
+-- // DRAG SYSTEM
+local Dragging = false
+local DragStart
+local StartPosition
+
+Header.InputBegan:Connect(function(Input)
+    if Input.UserInputType == Enum.UserInputType.MouseButton1 then
+        Dragging = true
+        DragStart = Input.Position
+        StartPosition = Main.Position
     end
-end
+end)
 
--- ESP
-local espToggle = FindToggle("ESP")
-if espToggle then
-    espToggle.MouseButton1Click:Connect(function()
-        Settings.ESP = not Settings.ESP
-    end)
-end
-
--- Aimbot
-local aimToggle = FindToggle("Aimbot")
-if aimToggle then
-    aimToggle.MouseButton1Click:Connect(function()
-        Settings.Aimbot = not Settings.Aimbot
-    end)
-end
-
--- Fly
-local flyToggle = FindToggle("Fly")
-if flyToggle then
-    flyToggle.MouseButton1Click:Connect(function()
-        Settings.Fly = not Settings.Fly
-        local char = LocalPlayer.Character
-        if char and char:FindFirstChild("Humanoid") then
-            char.Humanoid.PlatformStand = Settings.Fly
-        end
-    end)
-end
-
--- Noclip
-local noclipToggle = FindToggle("Noclip")
-if noclipToggle then
-    noclipToggle.MouseButton1Click:Connect(function()
-        Settings.Noclip = not Settings.Noclip
-    end)
-end
-
--- Поля ввода
-local speedBox = FindTextBox("Fly speed")
-if speedBox then
-    speedBox.FocusLost:Connect(function()
-        local val = tonumber(speedBox.Text)
-        if val then Settings.FlySpeed = val end
-    end)
-end
-
-local thicknessBox = FindTextBox("ESP line thickness")
-if thicknessBox then
-    thicknessBox.FocusLost:Connect(function()
-        local val = tonumber(thicknessBox.Text)
-        if val then Settings.ESPLineThickness = val end
-    end)
-end
-
-local textSizeBox = FindTextBox("ESP text size")
-if textSizeBox then
-    textSizeBox.FocusLost:Connect(function()
-        local val = tonumber(textSizeBox.Text)
-        if val then Settings.ESPTextSize = val end
-    end)
-end
-
--- Кнопки выбора цвета (привязываем через переопределение)
-for _, btn in pairs(Content:GetDescendants()) do
-    if btn:IsA("TextButton") and btn.Text:find("Blue") then
-        btn.MouseButton1Click:Connect(function() Settings.ESPColor = "Blue" end)
-    elseif btn:IsA("TextButton") and btn.Text:find("Red") then
-        btn.MouseButton1Click:Connect(function() Settings.ESPColor = "Red" end)
-    elseif btn:IsA("TextButton") and btn.Text:find("Green") then
-        btn.MouseButton1Click:Connect(function() Settings.ESPColor = "Green" end)
+Header.InputEnded:Connect(function(Input)
+    if Input.UserInputType == Enum.UserInputType.MouseButton1 then
+        Dragging = false
     end
-end
+end)
 
--- Кнопки выбора части тела
-for _, btn in pairs(Content:GetDescendants()) do
-    if btn:IsA("TextButton") and btn.Text == "Head" then
-        btn.MouseButton1Click:Connect(function() Settings.AimPart = "Head" end)
-    elseif btn:IsA("TextButton") and btn.Text == "Torso" then
-        btn.MouseButton1Click:Connect(function() Settings.AimPart = "Torso" end)
-    elseif btn:IsA("TextButton") and btn.Text:find("Legs") then
-        btn.MouseButton1Click:Connect(function() Settings.AimPart = "HumanoidRootPart" end)
+UserInputService.InputChanged:Connect(function(Input)
+    if not Dragging then return end
+    if Input.UserInputType == Enum.UserInputType.MouseMovement then
+        local Delta = Input.Position - DragStart
+        Main.Position = UDim2.new(
+            StartPosition.X.Scale,
+            StartPosition.X.Offset + Delta.X,
+            StartPosition.Y.Scale,
+            StartPosition.Y.Offset + Delta.Y
+        )
     end
-end
-
--- Кнопки выбора профессии
-for _, btn in pairs(Content:GetDescendants()) do
-    if btn:IsA("TextButton") and btn.Text:find("Civilian") then
-        btn.MouseButton1Click:Connect(function() Settings.Profession = "Civilian" end)
-    elseif btn:IsA("TextButton") and btn.Text:find("Border Patrol") then
-        btn.MouseButton1Click:Connect(function() Settings.Profession = "BorderPatrol" end)
-    elseif btn:IsA("TextButton") and btn.Text:find("Police") then
-        btn.MouseButton1Click:Connect(function() Settings.Profession = "Police" end)
-    end
-end
+end)
 
 -- // ================================================
--- // ESP (СИСТЕМА ВИЗУАЛЬНЫХ ПОДСКАЗОК)
+-- // ESP
 -- // ================================================
 
 local ESPObjects = {}
@@ -348,7 +517,7 @@ RunService.RenderStepped:Connect(function()
 end)
 
 -- // ================================================
--- // АВТОФАРМ (ПРОФЕССИИ)
+-- // АВТОФАРМ
 -- // ================================================
 
 local function FindObject(NamePattern)
